@@ -50,18 +50,18 @@ import java.util.List;
  */
 public class BaseServlet extends RestfulServer {
 
-    private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BaseServlet.class);
+    protected static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(BaseServlet.class);
 
-    private JpaDataProvider provider;
+    protected JpaDataProvider provider;
     public JpaDataProvider getProvider() {
         return provider;
     }
 
-    private AnnotationConfigWebApplicationContext myAppCtx;
+    protected AnnotationConfigWebApplicationContext myAppCtx;
 
-    private static final String FHIR_BASEURL_DSTU2 = "fhir.baseurl.dstu2";
-    private static final String FHIR_BASEURL_DSTU3 = "fhir.baseurl.dstu3";
-    private static final String FHIR_BASEURL_R4 = "fhir.baseurl.r4";
+    protected static final String FHIR_BASEURL_DSTU2 = "fhir.baseurl.dstu2";
+    protected static final String FHIR_BASEURL_DSTU3 = "fhir.baseurl.dstu3";
+    protected static final String FHIR_BASEURL_R4 = "fhir.baseurl.r4";
 
     @SuppressWarnings("unchecked")
     @Override
@@ -241,7 +241,6 @@ public class BaseServlet extends RestfulServer {
 
     private void resolveResourceProviders(JpaDataProvider provider, IFhirSystemDao systemDao) throws ServletException {
         NarrativeProvider narrativeProvider = new NarrativeProvider();
-
         // Bundle processing
         FHIRBundleResourceProvider bundleProvider = new FHIRBundleResourceProvider(provider);
         BundleResourceProvider jpaBundleProvider = (BundleResourceProvider) provider.resolveResourceProvider("Bundle");
@@ -385,11 +384,11 @@ public class BaseServlet extends RestfulServer {
         register(libraryProvider, provider.getCollectionProviders());
     }
 
-    private void register(IResourceProvider provider, Collection<IResourceProvider> providers) {
+    protected void register(IResourceProvider provider, Collection<IResourceProvider> providers) {
         providers.add(provider);
     }
 
-    private void unregister(IResourceProvider provider, Collection<IResourceProvider> providers) {
+    protected void unregister(IResourceProvider provider, Collection<IResourceProvider> providers) {
         providers.remove(provider);
     }
 
@@ -413,7 +412,7 @@ public class BaseServlet extends RestfulServer {
         throw new RuntimeException("Could not find resource provider for type: " + datatype);
     }
 
-    private static class MyHardcodedServerAddressStrategy extends HardcodedServerAddressStrategy {
+    protected static class MyHardcodedServerAddressStrategy extends HardcodedServerAddressStrategy {
 
         MyHardcodedServerAddressStrategy(String theBaseUrl) {
             super(theBaseUrl);

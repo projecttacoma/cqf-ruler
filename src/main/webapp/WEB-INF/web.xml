@@ -149,6 +149,27 @@
         <url-pattern>/on-measure-subscription-mrp</url-pattern>
     </servlet-mapping>
 
+    <!-- Themis Servlet Mapping -->
+    <!-- <servlet>
+        <servlet-name>fhirServletDstu3</servlet-name>
+        <servlet-class>org.opencds.cqf.servlet.ThemisServlet</servlet-class>
+        <init-param>
+            <param-name>ImplementationDescription</param-name>
+            <param-value>FHIR CQF Ruler-of-All-Knowledge JPA Server (STU3 Resources)</param-value>
+        </init-param>
+        <init-param>
+            <param-name>FhirVersion</param-name>
+            <param-value>DSTU3</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>fhirServletDstu3</servlet-name>
+        <url-pattern>/baseDstu3/*</url-pattern>
+    </servlet-mapping> -->
+
+
      <!--This filters provide support for Cross Origin Resource Sharing (CORS)-->
     <!--<filter>-->
         <!--<filter-name>CORS Filter</filter-name>-->
