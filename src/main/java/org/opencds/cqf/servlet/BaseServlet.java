@@ -239,7 +239,7 @@ public class BaseServlet extends RestfulServer {
         myAppCtx.close();
     }
 
-    private void resolveResourceProviders(JpaDataProvider provider, IFhirSystemDao systemDao) throws ServletException {
+    protected void resolveResourceProviders(JpaDataProvider provider, IFhirSystemDao systemDao) throws ServletException {
         NarrativeProvider narrativeProvider = new NarrativeProvider();
         // Bundle processing
         FHIRBundleResourceProvider bundleProvider = new FHIRBundleResourceProvider(provider);

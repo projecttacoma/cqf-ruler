@@ -39,7 +39,7 @@ public class ThemisServerConfigDstu3 extends FhirServerConfigDstu3 {
             Connection conn = ds.getConnection();
             conn.createStatement().execute("CREATE DATABASE " + this.getDatabase());
         } catch (SQLException e) {
-            if (!e.getSQLState().equals("42P04")) {
+            if (!(e.getSQLState() != null && e.getSQLState().equals("42P04"))) {
                 throw e;
             }
         } finally {

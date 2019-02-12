@@ -13,11 +13,7 @@
         <jetty_version>9.4.12.v20180830</jetty_version>
         <jackson_version>2.9.8</jackson_version>
         <hapi_version>3.5.0</hapi_version>
-<<<<<<< HEAD
         <cql_engine_version>1.2.54-SNAPSHOT</cql_engine_version>
-=======
-        <cql_engine_version>1.2.52-SNAPSHOT</cql_engine_version>
->>>>>>> Themis edition of cqf-ruler
         <derby_version>10.14.2.0</derby_version>
 
         <!-- jetty plugin properties (used when starting server locally) -->
@@ -78,15 +74,15 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
             <groupId>info.cqframework</groupId>
             <artifactId>cql-formatter</artifactId>
             <version>1.2.20</version>
-=======
+        </dependency>
+        
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.10.1</version>
->>>>>>> Themis edition of cqf-ruler
         </dependency>
 
         <dependency>
