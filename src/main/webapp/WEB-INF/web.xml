@@ -18,6 +18,24 @@
     </context-param>
 
     <!-- Servlets -->
+<!-- 
+    <servlet>
+        <servlet-name>qdm54</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>org.opencds.cqf.config.QdmServerConfig</param-value>
+        </init-param>
+        <init-param>
+            <param-name>FhirVersion</param-name>
+            <param-value>QDM</param-value>
+        </init-param>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
 
     <servlet>
         <servlet-name>on-measure-subscription-mrp</servlet-name>
@@ -149,8 +167,13 @@
         <url-pattern>/on-measure-subscription-mrp</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>qdm54</servlet-name>
+        <url-pattern>/baseDstu3/qdm/*</url-pattern>
+    </servlet-mapping> -->
+
     <!-- Themis Servlet Mapping -->
-    <!-- <servlet>
+    <servlet>
         <servlet-name>fhirServletDstu3</servlet-name>
         <servlet-class>org.opencds.cqf.servlet.ThemisServlet</servlet-class>
         <init-param>
@@ -164,10 +187,33 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>qdm54</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>org.opencds.cqf.config.QdmServerConfig</param-value>
+        </init-param>
+        <init-param>
+            <param-name>FhirVersion</param-name>
+            <param-value>QDM</param-value>
+        </init-param>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>fhirServletDstu3</servlet-name>
         <url-pattern>/baseDstu3/*</url-pattern>
-    </servlet-mapping> -->
+    </servlet-mapping>
+
+     <servlet-mapping>
+        <servlet-name>qdm54</servlet-name>
+        <url-pattern>/baseDstu3/qdm/*</url-pattern>
+    </servlet-mapping>
 
 
      <!--This filters provide support for Cross Origin Resource Sharing (CORS)-->
