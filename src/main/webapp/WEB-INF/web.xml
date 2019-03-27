@@ -220,16 +220,16 @@
     <!--<filter>-->
         <!--<filter-name>CORS Filter</filter-name>-->
         <!--<filter-class>org.ebaysf.web.cors.CORSFilter</filter-class>-->
-        <!--<init-param>-->
-            <!--<description>A comma separated list of allowed origins. Note: An '*' cannot be used for an allowed origin when using credentials.</description>-->
-            <!--<param-name>cors.allowed.origins</param-name>-->
-            <!--<param-value>http://sandbox.cds-hooks.org, http://clinfhir.com, *</param-value>-->
-        <!--</init-param>-->
         <!--&lt;!&ndash;<init-param>&ndash;&gt;-->
-        <!--&lt;!&ndash;<description>A comma separated list of allowed origins. Note: An '*' cannot be used for an allowed origin when using credentials.</description>&ndash;&gt;-->
-        <!--&lt;!&ndash;<param-name>cors.allowed.origins</param-name>&ndash;&gt;-->
-        <!--&lt;!&ndash;<param-value>*</param-value>&ndash;&gt;-->
+            <!--&lt;!&ndash;<description>A comma separated list of allowed origins. Note: An '*' cannot be used for an allowed origin when using credentials.</description>&ndash;&gt;-->
+            <!--&lt;!&ndash;<param-name>cors.allowed.origins</param-name>&ndash;&gt;-->
+            <!--&lt;!&ndash;<param-value>http://sandbox.cds-hooks.org, http://clinfhir.com, *</param-value>&ndash;&gt;-->
         <!--&lt;!&ndash;</init-param>&ndash;&gt;-->
+        <!--<init-param>-->
+        <!--<description>A comma separated list of allowed origins. Note: An '*' cannot be used for an allowed origin when using credentials.</description>-->
+        <!--<param-name>cors.allowed.origins</param-name>-->
+        <!--<param-value>*</param-value>-->
+        <!--</init-param>-->
         <!--<init-param>-->
             <!--<description>A comma separated list of HTTP verbs, using which a CORS request can be made.</description>-->
             <!--<param-name>cors.allowed.methods</param-name>-->
@@ -263,7 +263,7 @@
     <!--</filter>-->
     <!--<filter-mapping>-->
         <!--<filter-name>CORS Filter</filter-name>-->
-        <!--<url-pattern>/*</url-pattern>-->
+        <!--<url-pattern>/baseDstu3/qdm/*</url-pattern>-->
     <!--</filter-mapping>-->
 
 </web-app>

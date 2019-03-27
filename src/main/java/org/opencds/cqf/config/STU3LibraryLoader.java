@@ -87,18 +87,16 @@ public class STU3LibraryLoader implements LibraryLoader {
     }
 
     private Library loadLibrary(VersionedIdentifier libraryIdentifier) {
-        //IdType id = new IdType(libraryIdentifier.getId());
-        //org.hl7.fhir.dstu3.model.Library library = provider.getDao().read(id);
-
+        IdType id = new IdType(libraryIdentifier.getId().replaceAll("_", "-"));
         org.hl7.fhir.dstu3.model.Library library = null;
         try
         {
-            library = LibraryResourceHelper.resolveLibrary(provider, libraryIdentifier.getId(), libraryIdentifier.getVersion());
+            library = LibraryResourceHelper.resolveLibrary(provider, id, libraryIdentifier.getVersion());
         }
         catch (Exception e)
         {
             try {
-                IdType id = new IdType(libraryIdentifier.getId());
+                IdType id = new IdType(id);
                 library = provider.getDao().read(id);
             }
             catch (Exception ex){ 
@@ -108,7 +106,6 @@ public class STU3LibraryLoader implements LibraryLoader {
         if (library == null) {
             throw new IllegalArgumentException(String.format("Could not resolve library by name or Id %s", libraryIdentifier.getId()));
         }
-
 
         Library elmLibrary = toElmLibrary(library);
         if (elmLibrary != null) {

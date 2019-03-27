@@ -6,10 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,36 +28,34 @@ public class CareGoal extends BaseType implements Serializable
     })
     private DateTimeInterval relevantPeriod;
 
-    @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "related_to_value")),
-            @AttributeOverride(name = "namingSystem", column = @Column(name = "related_to_system"))
-    })
-    private Id relatedTo;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Id> relatedTo;
 
-    // TODO: add constraint that only one of the result[x] types can be present
-    private Integer resultInteger;
+    // TODO: add constraint that only one of the targetOutcome[x] types can be present
+    private Integer targetOutcomeInteger;
 
-    private BigDecimal resultDecimal;
+    private BigDecimal targetOutcomeDecimal;
 
     @AttributeOverrides({
-            @AttributeOverride(name = "code", column = @Column(name = "result_code")),
-            @AttributeOverride(name = "display", column = @Column(name = "result_display")),
-            @AttributeOverride(name = "system", column = @Column(name = "result_system")),
-            @AttributeOverride(name = "version", column = @Column(name = "result_version"))
+            @AttributeOverride(name = "code", column = @Column(name = "target_outcome_code")),
+            @AttributeOverride(name = "display", column = @Column(name = "target_outcome_display")),
+            @AttributeOverride(name = "system", column = @Column(name = "target_outcome_system")),
+            @AttributeOverride(name = "version", column = @Column(name = "target_outcome_version"))
     })
-    private Code resultCode;
+    private Code targetOutcomeCode;
 
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "result_value")),
-            @AttributeOverride(name = "unit", column = @Column(name = "result_unit"))
+            @AttributeOverride(name = "value", column = @Column(name = "target_outcome_value")),
+            @AttributeOverride(name = "unit", column = @Column(name = "target_outcome_unit"))
     })
-    private Quantity resultQuantity;
+    private Quantity targetOutcomeQuantity;
 
     @AttributeOverrides({
-            @AttributeOverride(name = "numerator", column = @Column(name = "result_numerator")),
-            @AttributeOverride(name = "denominator", column = @Column(name = "result_denominator"))
+            @AttributeOverride(name = "numerator", column = @Column(name = "target_outcome_numerator")),
+            @AttributeOverride(name = "denominator", column = @Column(name = "target_outcome_denominator"))
     })
-    private Ratio resultRatio;
+    private Ratio targetOutcomeRatio;
 
     @JsonIgnore
     @Override
@@ -71,11 +72,11 @@ public class CareGoal extends BaseType implements Serializable
             super.copy(careGoal);
             setRelevantPeriod(careGoal.getRelevantPeriod());
             setRelatedTo(careGoal.getRelatedTo());
-            setResultInteger(careGoal.getResultInteger());
-            setResultDecimal(careGoal.getResultDecimal());
-            setResultCode(careGoal.getResultCode());
-            setResultQuantity(careGoal.getResultQuantity());
-            setResultRatio(careGoal.getResultRatio());
+            setTargetOutcomeInteger(careGoal.getTargetOutcomeInteger());
+            setTargetOutcomeDecimal(careGoal.getTargetOutcomeDecimal());
+            setTargetOutcomeCode(careGoal.getTargetOutcomeCode());
+            setTargetOutcomeQuantity(careGoal.getTargetOutcomeQuantity());
+            setTargetOutcomeRatio(careGoal.getTargetOutcomeRatio());
         }
         else
         {
