@@ -74,6 +74,7 @@ public class ThemisServlet extends BaseServlet {
                 myAppCtx.getBean("terminologyService", IHapiTerminologySvcDstu3.class), getFhirContext(),
                 (ValueSetResourceProvider) provider.resolveResourceProvider("ValueSet"));
         provider.setTerminologyProvider(terminologyProvider);
+        
         resolveResourceProviders(provider, systemDao);
 
         CqlExecutionProvider cql = new CqlExecutionProvider(provider);

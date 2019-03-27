@@ -196,7 +196,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>org.opencds.cqf.config.QdmServerConfig</param-value>
+            <param-value>org.opencds.cqf.config.ThemisServerConfigQdm</param-value>
         </init-param>
         <init-param>
             <param-name>FhirVersion</param-name>

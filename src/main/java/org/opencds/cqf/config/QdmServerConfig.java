@@ -56,7 +56,7 @@ public class QdmServerConfig
     }
 
     // Derby config
-    private Properties jpaProperties()
+    protected Properties jpaProperties()
     {
         Properties extraProperties = new Properties();
         extraProperties.put("hibernate.dialect", org.hibernate.dialect.DerbyTenSevenDialect.class.getName());
