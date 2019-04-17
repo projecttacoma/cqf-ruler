@@ -5,25 +5,22 @@
     <artifactId>cqf-ruler</artifactId>
     <version>0.1.8-SNAPSHOT</version>
 
+    <modules>
+        <module>dstu3</module>
+        <module>dstu2</module>
+    </modules>
+
     <properties>
         <p.type>war</p.type>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <jetty_version>9.4.12.v20180830</jetty_version>
-        <jackson_version>2.9.8</jackson_version>
-        <hapi_version>3.5.0</hapi_version>
-        <cql_engine_version>1.2.54-SNAPSHOT</cql_engine_version>
-        <derby_version>10.14.2.0</derby_version>
-
-        <!-- jetty plugin properties (used when starting server locally) -->
-        <dev>true</dev>
-        <protocolAndHost>http://localhost:8080</protocolAndHost>
-        <dstu3Path>cqf-ruler/baseDstu3</dstu3Path>
-        <dstu2Path>cqf-ruler/baseDstu2</dstu2Path>
-        <r4Path>cqf-ruler/baseR4</r4Path>
+        <java.version>1.8</java.version>
+        <hapi_version>3.7.0</hapi_version>
+        <spring_boot_version>2.1.1.RELEASE</spring_boot_version>
     </properties>
-    <packaging>${p.type}</packaging>
+
+    <packaging>pom</packaging>
 
     <name>CQF Ruler</name>
 
@@ -42,351 +39,93 @@
     </repositories>
 
     <dependencies>
-
+        <!-- Compile -->
         <dependency>
-            <groupId>org.opencds.cqf</groupId>
-            <artifactId>cql-engine</artifactId>
-            <version>${cql_engine_version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring_boot_version}</version>
+            <type>pom</type>
+            <scope>import</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.opencds.cqf</groupId>
-            <artifactId>cql-engine-fhir</artifactId>
-            <version>${cql_engine_version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring_boot_version}</version>
         </dependency>
-
         <dependency>
-            <groupId>info.cqframework</groupId>
-            <artifactId>cql-to-elm</artifactId>
-            <version>1.2.20</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring_boot_version}</version>
         </dependency>
-
         <dependency>
-            <groupId>info.cqframework</groupId>
-            <artifactId>cql-formatter</artifactId>
-            <version>1.2.20</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+            <version>${spring_boot_version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson_version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson_version}</version>
-        </dependency>
-
-        <!-- This dependency includes the core HAPI-FHIR classes -->
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-base</artifactId>
-            <version>${hapi_version}</version>
-        </dependency>
-
-        <!-- At least one "structures" JAR must also be included -->
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-dstu2</artifactId>
-            <version>${hapi_version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring_boot_version}</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-dstu3</artifactId>
+            <artifactId>hapi-fhir-spring-boot-starter</artifactId>
             <version>${hapi_version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-converter</artifactId>
-            <version>${hapi_version}</version>
-        </dependency>
-
-        <!-- This dependency includes the JPA server itself, which is packaged separately from the rest of HAPI FHIR -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-jpaserver-base</artifactId>
             <version>${hapi_version}</version>
         </dependency>
-
-        <!-- This dependency is used for the "FHIR Tester" web app overlay -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-testpage-overlay</artifactId>
+            <artifactId>hapi-fhir-jaxrsserver-base</artifactId>
             <version>${hapi_version}</version>
-            <type>war</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-testpage-overlay</artifactId>
+            <artifactId>hapi-fhir-client-okhttp</artifactId>
             <version>${hapi_version}</version>
-            <classifier>classes</classifier>
-            <scope>provided</scope>
         </dependency>
-
-        <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback
-            is used here, but log4j would also be fine. -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>jcl-over-slf4j</artifactId>-->
-            <!--<version>1.7.22</version>-->
-        <!--</dependency>-->
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.15</version>
-        </dependency>
-
-        <!-- Needed for JEE/Servlet support -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-
-        <!-- If you are using HAPI narrative generation, you will need to include Thymeleaf as well. Otherwise the following can be omitted. -->
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>3.0.9.RELEASE</version>
-        </dependency>
-
-        <!-- You may not need this if you are deploying to an application server which provides database connection pools itself. -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-dbcp2</artifactId>
-            <version>2.5.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.4.1212.jre7</version>
-        </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.197</version>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby_version}</version>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.8.1</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.opencds.cqf</groupId>-->
+            <!--<artifactId>dstu3</artifactId>-->
+            <!--<version>0.1.8-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!-- Optional -->
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbynet</artifactId>
-            <version>${derby_version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring_boot_version}</version>
+            <optional>true</optional>
         </dependency>
+        <!-- Test -->
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyclient</artifactId>
-            <version>${derby_version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.phloc</groupId>
-            <artifactId>phloc-schematron</artifactId>
-            <version>2.7.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.ebaysf.web</groupId>
-            <artifactId>cors-filter</artifactId>
-            <version>1.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring_boot_version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <build>
-
-        <!-- Tells Maven to name the generated WAR file as cql-measure-processor.war -->
-        <finalName>cqf-ruler</finalName>
-
-        <plugins>
-            <!-- Tell Maven which Java source version you want to use -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty_version}</version>
-                <configuration>
-                    <systemProperties>
-                        <systemProperty>
-                            <name>org.eclipse.jetty.server.Request.maxFormContentSize</name>
-                            <value>-1</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <key>fhir.baseurl.r4</key>
-                            <value>${protocolAndHost}/${r4Path}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <key>fhir.baseurl.dstu3</key>
-                            <value>${protocolAndHost}/${dstu3Path}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <key>fhir.baseurl.dstu2</key>
-                            <value>${protocolAndHost}/${dstu2Path}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <key>testmode.local</key>
-                            <value>${dev}</value>
-                        </systemProperty>
-                    </systemProperties>
-                    <webApp>
-                        <contextPath>/cqf-ruler</contextPath>
-                        <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                        <!-- Prevent unnecessary scanning to reduce start time -->
-                        <webInfIncludeJarPattern>^$</webInfIncludeJarPattern>
-                        <containerIncludeJarPattern>^$</containerIncludeJarPattern>
-                    </webApp>
-                </configuration>
-            </plugin>
-
-            <!-- The configuration here tells the WAR plugin to include the FHIR Tester overlay. You can omit it if you are not using that feature. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Build-Time>${maven.build.timestamp}</Build-Time>
-                        </manifestEntries>
-                    </archive>
-                    <overlays>
-                        <overlay>
-                            <groupId>ca.uhn.hapi.fhir</groupId>
-                            <artifactId>hapi-fhir-testpage-overlay</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-
-            <!-- Use when publishing -->
+    <!--<build>-->
+        <!--<plugins>-->
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>3.1.0</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>make-a-jar</id>-->
-                        <!--<phase>compile</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>test-jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+                <!--<version>${spring_boot_version}</version>-->
             <!--</plugin>-->
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>make-a-jar</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
+        <!--</plugins>-->
+    <!--</build>-->
 
 </project>

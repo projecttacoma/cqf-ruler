@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: production_nginx
+    volumes:
+      - ./nginx.conf:/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+
+  cqf-ruler-dstu3-container:
+    image: ba
+    build:
+      context: ./dstu3/
+      dockerfile: Dockerfile
+    volumes:
+      - /dst3/data/dstu3-0.1.8-SNAPSHOT
+    ports:
+      - "8080:8080"
+
+  cqf-ruler-dstu2-container:
+      image: dstu2
+      build:
+        context: ./dstu2/
+        dockerfile: Dockerfile
+      volumes:
+        - /dst2/data/dstu2-0.1.8-SNAPSHOT
+      ports:
+        - "8081:8081"
