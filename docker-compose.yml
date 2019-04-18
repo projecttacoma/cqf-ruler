@@ -18,7 +18,7 @@ services:
     ports:
       - "8080"
     labels:
-      traefik.frontend.rule: "PathPrefix:/dstu3"
+      traefik.frontend.rule: "PathPrefix:/fhir/baseDstu3"
 
   dstu2:
     build:
@@ -26,4 +26,4 @@ services:
     ports:
       - "8081"
     labels:
-      traefik.frontend.rule: "PathPrefix:/dstu2"
+      traefik.frontend.rule: "PathPrefix:/fhir/baseDstu2"
