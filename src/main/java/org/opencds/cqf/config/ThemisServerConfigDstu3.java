@@ -12,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import ca.uhn.fhir.context.ConfigurationException;
 import ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory;
 
 @Configuration
@@ -26,18 +28,18 @@ public class ThemisServerConfigDstu3 extends FhirServerConfigDstu3 {
     protected static final String POSTGRES_USER = "themis.postgres.user";
     protected static final String POSTGRES_PASSWORD = "themis.postgres.password";
 
+    public ThemisServerConfigDstu3() {
+        super(getDataSource());
+    }
+
+
     @PostConstruct
     public void initialize() throws SQLException {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriver(new org.postgresql.Driver());
-        ds.setUsername(this.getUser());
-        ds.setPassword(this.getPassword());
-        // ds.setPasswork("");
-        ds.setUrl("jdbc:postgresql://" + this.getHost() + "/postgres");
+        BasicDataSource ds = getDataSource();
 
         try {
             Connection conn = ds.getConnection();
-            conn.createStatement().execute("CREATE DATABASE " + this.getDatabase());
+            conn.createStatement().execute("CREATE DATABASE " + getDatabase());
         } catch (SQLException e) {
             if (!(e.getSQLState() != null && e.getSQLState().equals("42P04"))) {
                 throw e;
@@ -47,57 +49,51 @@ public class ThemisServerConfigDstu3 extends FhirServerConfigDstu3 {
         }
     }
 
-    private String getPassword() {
-        return this.getPropertyOrDefault(POSTGRES_PASSWORD, "");
+    private static String getPassword() {
+        return getPropertyOrDefault(POSTGRES_PASSWORD, "");
     }
 
-    private String getUser() {
-        return this.getPropertyOrDefault(POSTGRES_USER, "postgres");
+    private static String getUser() {
+        return getPropertyOrDefault(POSTGRES_USER, "postgres");
     }
 
-    private String getHost() {
-        return this.getPropertyOrDefault(POSTGRES_HOST, "localhost:5432");
+    private static String getHost() {
+        return getPropertyOrDefault(POSTGRES_HOST, "localhost:5432");
     }
 
-    private String getDatabase() {
-        return this.getPropertyOrDefault(POSTGRES_DB, "fhir");
+    private static String getDatabase() {
+        return getPropertyOrDefault(POSTGRES_DB, "fhir");
     }
 
-    private String getPropertyOrDefault(String property, String defaultValue) {
+    private static String getPropertyOrDefault(String property, String defaultValue) {
         String value = System.getProperty(property);
         return StringUtils.isEmpty(value) ? defaultValue : value;
     }
 
-    // PostgreSQL config
-    @Override
-    @Bean(name = "myPersistenceDataSourceDstu3", destroyMethod = "close")
-    public DataSource dataSource() {
+    private static BasicDataSource getDataSource() {
         BasicDataSource retVal = new BasicDataSource();
         retVal.setDriver(new org.postgresql.Driver());
-        retVal.setUsername(this.getUser());
-        retVal.setPassword(this.getPassword());
-        retVal.setUrl("jdbc:postgresql://" + this.getHost() + "/" + this.getDatabase());
+        retVal.setUsername(getUser());
+        retVal.setPassword(getPassword());
+        retVal.setUrl("jdbc:postgresql://" + getHost() + "/" + getDatabase());
         return retVal;
     }
 
-    // PostgreSQL config
     @Override
-    protected Properties jpaProperties() {
-        Properties extraProperties = new Properties();
+    @Bean()
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean retVal = super.entityManagerFactory();
+        retVal.setPersistenceUnitName(HapiProperties.getPersistenceUnitName());
+
+        try {
+            retVal.setDataSource(myDataSource);
+        } catch (Exception e) {
+            throw new ConfigurationException("Could not set the data source due to a configuration issue", e);
+        }
+
+        Properties extraProperties = HapiProperties.getProperties();
         extraProperties.put("hibernate.dialect", org.hibernate.dialect.PostgreSQL94Dialect.class.getName());
-        extraProperties.put("hibernate.format_sql", "true");
-        extraProperties.put("hibernate.show_sql", "false");
-        extraProperties.put("hibernate.hbm2ddl.auto", "update");
-        extraProperties.put("hibernate.jdbc.batch_size", "20");
-        extraProperties.put("hibernate.cache.use_query_cache", "false");
-        extraProperties.put("hibernate.cache.use_second_level_cache", "false");
-        extraProperties.put("hibernate.cache.use_structured_entries", "false");
-        extraProperties.put("hibernate.cache.use_minimal_puts", "false");
-        extraProperties.put("hibernate.search.model_mapping", LuceneSearchMappingFactory.class.getName());
-        extraProperties.put("hibernate.search.default.directory_provider", "filesystem");
-        extraProperties.put("hibernate.search.default.indexBase", "target/lucenefiles_stu3");
-        extraProperties.put("hibernate.search.lucene_version", "LUCENE_CURRENT");
-        // extraProperties.put("hibernate.search.default.worker.execution", "async");
-        return extraProperties;
+        retVal.setJpaProperties(extraProperties);
+        return retVal;
     }
 }

@@ -1,10 +1,8 @@
 package org.opencds.cqf.helpers;
 
-import ca.uhn.fhir.jpa.dao.SearchParameterMap;
 import ca.uhn.fhir.jpa.rp.dstu3.LibraryResourceProvider;
+import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.rest.param.StringParam;
-
-import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import java.util.ArrayList;
@@ -42,6 +40,10 @@ public class LibraryResourceHelper {
         // TODO: Version comparison here...
         Iterable<org.hl7.fhir.dstu3.model.Library> libraries = getLibrariesByName(provider, libraryName);
         for (org.hl7.fhir.dstu3.model.Library l : libraries) {
+            if (!l.hasVersion()) {
+                library = l;
+                break;
+            }
             if (libraryVersion != null && l.getVersion().equals(libraryVersion)) {
                 library = l;
                 break;

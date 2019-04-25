@@ -1,6 +1,6 @@
 package org.opencds.cqf.providers;
 
-import ca.uhn.fhir.jpa.dao.SearchParameterMap;
+import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.rp.dstu3.CodeSystemResourceProvider;
 import ca.uhn.fhir.jpa.rp.dstu3.ValueSetResourceProvider;
 import ca.uhn.fhir.rest.annotation.*;
@@ -88,9 +88,7 @@ public class FHIRValueSetResourceProvider extends ValueSetResourceProvider {
                             codeSystem = new CodeSystem()
                                     .setUrl(include.getSystem())
                                     .setStatus(Enumerations.PublicationStatus.ACTIVE);
-                            if (!include.getSystem().equals("http://snomed.info/sct")) {
-                                codeSystem.setContent(CodeSystem.CodeSystemContentMode.EXAMPLE);
-                            }
+                            codeSystem.setContent(CodeSystem.CodeSystemContentMode.COMPLETE);
                             codeSystem.setId(id);
                             codeSystems.put(id, codeSystem);
                         }

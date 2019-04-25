@@ -10,9 +10,6 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory;
 
