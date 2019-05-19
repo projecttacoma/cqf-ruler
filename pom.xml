@@ -8,6 +8,8 @@
     <modules>
         <module>dstu3</module>
         <module>dstu2</module>
+        <module>r4</module>
+        <module>cdshooks</module>
     </modules>
 
     <properties>
@@ -16,7 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <java.version>1.8</java.version>
-        <hapi_version>3.7.0</hapi_version>
+        <hapi_version>3.8.0-SNAPSHOT</hapi_version>
         <spring_boot_version>2.1.1.RELEASE</spring_boot_version>
     </properties>
 
@@ -97,11 +99,21 @@
             <artifactId>okhttp</artifactId>
             <version>3.8.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.opencds.cqf</groupId>-->
-            <!--<artifactId>dstu3</artifactId>-->
-            <!--<version>0.1.8-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.opencds.cqf</groupId>
+            <artifactId>cql-engine</artifactId>
+            <version>1.2.57-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opencds.cqf</groupId>
+            <artifactId>cql-engine-fhir</artifactId>
+            <version>1.2.57-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>info.cqframework</groupId>
+            <artifactId>cql-formatter</artifactId>
+            <version>1.2.20</version>
+        </dependency>
         <!-- Optional -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -118,14 +130,18 @@
         </dependency>
     </dependencies>
 
-    <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<groupId>org.springframework.boot</groupId>-->
-                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-                <!--<version>${spring_boot_version}</version>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</build>-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

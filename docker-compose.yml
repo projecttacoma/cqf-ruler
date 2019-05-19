@@ -18,7 +18,7 @@ services:
     ports:
       - "8080"
     labels:
-      traefik.frontend.rule: "PathPrefix:/fhir/baseDstu3"
+      traefik.frontend.rule: "PathPrefix:/cqf-ruler/baseDstu3"
 
   dstu2:
     build:
@@ -26,4 +26,22 @@ services:
     ports:
       - "8081"
     labels:
-      traefik.frontend.rule: "PathPrefix:/fhir/baseDstu2"
+      traefik.frontend.rule: "PathPrefix:/cqf-ruler/baseDstu2"
+
+  dstu4:
+    build:
+      context: ./r4/
+    ports:
+      - "8082"
+    labels:
+      traefik.frontend.rule: "PathPrefix:/cqf-ruler/baseR4"
+
+#  cdshooks:
+#    build:
+#      context: ./cdshooks/
+#    ports:
+#      - "8083"
+#    depends_on:
+#      - dstu3
+#    labels:
+#      traefik.frontend.rule: "PathPrefix:/cqf-ruler/cds-services"

@@ -18,13 +18,13 @@ spring:
       enabled: true
 hapi:
   fhir:
-    version: dstu2
+    version: r4
     server:
-      path: /cqf-ruler/baseDstu2/*
+      path: /cqf-ruler/baseR4/*
     rest:
-      server-name: CQF Ruler DSTU2 FHIR Server
+      server-name: CQF Ruler R4 FHIR Server
       server-version: 1.0.0
-      implementation-description: Spring Boot DSTU2 FHIR Server
+      implementation-description: Spring Boot R4 FHIR Server
       default-response-encoding: json
       e-tag-support: enabled
       default-pretty-print: true
@@ -35,4 +35,4 @@ hapi:
       scheduling-disabled: true
       subscription-enabled: false
 server:
-  port: 8081
+  port: 8082
