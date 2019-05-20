@@ -71,6 +71,8 @@ public class BaseServlet extends RestfulServer
         registerProviders(plainProviders);
         setResourceProviders(resourceProviders);
 
+        CdsHooksServlet.provider = provider;
+
         /*
          * ETag Support
          */

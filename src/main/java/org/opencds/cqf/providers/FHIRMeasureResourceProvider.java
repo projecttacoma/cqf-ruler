@@ -50,6 +50,7 @@ import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.opencds.cqf.config.STU3LibraryLoader;
 import org.opencds.cqf.evaluation.MeasureEvaluation;
 import org.opencds.cqf.evaluation.MeasureEvaluationSeed;
+import org.opencds.cqf.helpers.DataElementType;
 import org.opencds.cqf.helpers.LibraryHelper;
 import org.opencds.cqf.helpers.LibraryResourceHelper;
 import org.opencds.cqf.providers.CqfMeasure.TerminologyRef;
@@ -555,9 +556,11 @@ public class FHIRMeasureResourceProvider extends MeasureResourceProvider {
         for (Library library : libraryLoader.getLibraries()) {
             Boolean isPrimaryLibrary = library.getIdentifier().getId().equalsIgnoreCase(primaryLibrary.getIdentifier().getId());
             String libraryNamespace = "";
-            for (IncludeDef include : primaryLibrary.getIncludes().getDef()) {
-                if (library.getIdentifier().getId().equalsIgnoreCase(include.getPath())) {
-                    libraryNamespace = include.getLocalIdentifier() + ".";
+            if (primaryLibrary.getIncludes() != null) {
+                for (IncludeDef include : primaryLibrary.getIncludes().getDef()) {
+                    if (library.getIdentifier().getId().equalsIgnoreCase(include.getPath())) {
+                        libraryNamespace = include.getLocalIdentifier() + ".";
+                    }
                 }
             }
             VersionedIdentifier libraryIdentifier = library.getIdentifier();
@@ -580,50 +583,52 @@ public class FHIRMeasureResourceProvider extends MeasureResourceProvider {
             }
             String[] cqlLines = cql.replaceAll("[\r]", "").split("[\n]");
     
-            for (ExpressionDef statement : library.getStatements().getDef()) {
-                String[] location = statement.getLocator().split("-");
-                String statementText = "";
-                String signature = "";
-                int start = Integer.parseInt(location[0].split(":")[0]);
-                int end = Integer.parseInt(location[1].split(":")[0]);
-                for (int i = start - 1; i < end; i++) {
-                    if (cqlLines[i].contains("define function \"" + statement.getName() + "\"(")) {
-                        signature = cqlLines[i].substring(cqlLines[i].indexOf("("), cqlLines[i].indexOf(")") + 1);
-                    }
-                    if (!cqlLines[i].contains("define \"" + statement.getName() + "\":") && !cqlLines[i].contains("define function \"" + statement.getName() + "\"(")) {
-                        statementText = statementText.concat((statementText.length() > 0 ? "\r\n" : "") + cqlLines[i]);
-                    }
-                }
-                if (statementText.startsWith("context")) {
-                    continue;
-                }
-                MeasureGroupPopulationComponent def = new MeasureGroupPopulationComponent();
-                def.setName(libraryNamespace + statement.getName() + signature);
-                def.setCriteria(statementText);
-                //TODO: Only statements that are directly referenced in the primary library cql will be included.
-                if (statement.getClass() == FunctionDef.class) {
-                    if (isPrimaryLibrary || primaryLibraryCql.contains(libraryNamespace + "\"" + statement.getName() + "\"")) {
-                        functionStatements.add(def);
-                    }
-                }
-                else {
-                    if (isPrimaryLibrary || primaryLibraryCql.contains(libraryNamespace + "\"" + statement.getName() + "\"")) {
-                        definitionStatements.add(def);
-                    }
-                }
-
-                for (MeasureGroupComponent group : populationStatements) {
-                    for (MeasureGroupPopulationComponent population : group.getPopulation()) {
-                        if (population.getCriteria().equalsIgnoreCase(statement.getName())) {
-                            population.setName(statement.getName());
-                            population.setCriteria(statementText);
+            if (library.getStatements() != null) {
+                for (ExpressionDef statement : library.getStatements().getDef()) {
+                    String[] location = statement.getLocator().split("-");
+                    String statementText = "";
+                    String signature = "";
+                    int start = Integer.parseInt(location[0].split(":")[0]);
+                    int end = Integer.parseInt(location[1].split(":")[0]);
+                    for (int i = start - 1; i < end; i++) {
+                        if (cqlLines[i].contains("define function \"" + statement.getName() + "\"(")) {
+                            signature = cqlLines[i].substring(cqlLines[i].indexOf("("), cqlLines[i].indexOf(")") + 1);
+                        }
+                        if (!cqlLines[i].contains("define \"" + statement.getName() + "\":") && !cqlLines[i].contains("define function \"" + statement.getName() + "\"(")) {
+                            statementText = statementText.concat((statementText.length() > 0 ? "\r\n" : "") + cqlLines[i]);
                         }
                     }
-                }
+                    if (statementText.startsWith("context")) {
+                        continue;
+                    }
+                    MeasureGroupPopulationComponent def = new MeasureGroupPopulationComponent();
+                    def.setName(libraryNamespace + statement.getName() + signature);
+                    def.setCriteria(statementText);
+                    //TODO: Only statements that are directly referenced in the primary library cql will be included.
+                    if (statement.getClass() == FunctionDef.class) {
+                        if (isPrimaryLibrary || primaryLibraryCql.contains(libraryNamespace + "\"" + statement.getName() + "\"")) {
+                            functionStatements.add(def);
+                        }
+                    }
+                    else {
+                        if (isPrimaryLibrary || primaryLibraryCql.contains(libraryNamespace + "\"" + statement.getName() + "\"")) {
+                            definitionStatements.add(def);
+                        }
+                    }
 
-                for (MeasureSupplementalDataComponent dataComponent : cqfMeasure.getSupplementalData()) {
-                    if (dataComponent.getCriteria().equalsIgnoreCase(def.getName())) {
-                        supplementalDataElements.add(def);
+                    for (MeasureGroupComponent group : populationStatements) {
+                        for (MeasureGroupPopulationComponent population : group.getPopulation()) {
+                            if (population.getCriteria().equalsIgnoreCase(statement.getName())) {
+                                population.setName(statement.getName());
+                                population.setCriteria(statementText);
+                            }
+                        }
+                    }
+
+                    for (MeasureSupplementalDataComponent dataComponent : cqfMeasure.getSupplementalData()) {
+                        if (dataComponent.getCriteria().equalsIgnoreCase(def.getName())) {
+                            supplementalDataElements.add(def);
+                        }
                     }
                 }
             }
@@ -694,10 +699,13 @@ public class FHIRMeasureResourceProvider extends MeasureResourceProvider {
                   
                     for (DataRequirement data : cqfMeasure.getDataRequirement()) {
                         String type = data.getType();
-                        // .split("[A-Z]");
-                        // if (type.contains("Negative")) {
-                        //     type = 
-                        // }
+                        try {
+                            DataElementType dataType = DataElementType.valueOf(type.toUpperCase());
+                            type = dataType.toString();
+                        } catch (Exception e) {
+                            //Do Nothing.  Leave type as is.
+                        }
+
                         for (DataRequirementCodeFilterComponent filter : data.getCodeFilter()) {
                             if (filter.hasValueSetStringType() && filter.getValueSetStringType().getValueAsString().equalsIgnoreCase(valueSet.getId())) {
                                 StringType dataElement = new StringType();
