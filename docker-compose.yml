@@ -12,11 +12,11 @@ services:
       - 80:80
       - 443:443
 
-  # dstu3:
-  #   build:
-  #     context: ./dstu3/
-  #   labels:
-  #     traefik.frontend.rule: "PathPrefix:/cqf-ruler/baseDstu3"
+  dstu3:
+    build:
+      context: ./dstu3/
+    labels:
+      traefik.frontend.rule: "PathPrefix:/cqf-ruler/baseDstu3"
 
   dstu2:
     build:

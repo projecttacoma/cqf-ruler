@@ -1,4 +1,4 @@
-package org.opencds.cqf.dstu2;
+package org.opencds.cqf.dstu3;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -35,4 +35,5 @@ public class SplitBeforeBaseAddressStrategy implements IServerAddressStrategy {
             }
         }
 	}
+
 }

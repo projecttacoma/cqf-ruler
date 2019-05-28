@@ -197,7 +197,7 @@ public class CqfRulerDstu3Config
             setResourceProviders(dataProvider.getResourceProviders());
             setPagingProvider(this.pagingProvider);
 
-            setServerAddressStrategy(new HardcodedServerAddressStrategy(this.properties.getServer().getPath()));
+            setServerAddressStrategy(new SplitBeforeBaseAddressStrategy());
 
             JpaConformanceProviderDstu3 confProvider = new JpaConformanceProviderDstu3(this, systemDao, daoConfig);
             confProvider.initializeOperations();

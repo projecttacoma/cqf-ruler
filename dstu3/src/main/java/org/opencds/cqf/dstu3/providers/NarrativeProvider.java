@@ -12,7 +12,7 @@ public class NarrativeProvider
 
     public NarrativeProvider()
     {
-        this(NarrativeProvider.class.getClassLoader().getResource("narratives/narrative.properties").toString());
+        //this(NarrativeProvider.class.getClassLoader().getResource("narratives/narrative.properties").toString());
     }
 
     public NarrativeProvider(String pathToPropertiesFile)

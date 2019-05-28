@@ -85,7 +85,8 @@ public class CqfRulerDstu2Config
 
         @Bean
         public ServletRegistrationBean serverRegistrationBean() {
-            ServletRegistrationBean registration = new ServletRegistrationBean(this, "/*");
+            // This is the path relative to the Tomcat server
+            ServletRegistrationBean registration = new ServletRegistrationBean(this, this.properties.getServer().getPath());
             registration.setLoadOnStartup(1);
             return registration;
         }
@@ -98,6 +99,7 @@ public class CqfRulerDstu2Config
             setResourceProviders(this.resourceProviders);
             setPagingProvider(this.pagingProvider);
 
+            // This is the absolute url of the server
             setServerAddressStrategy(new SplitBeforeBaseAddressStrategy());
 
             customize();
