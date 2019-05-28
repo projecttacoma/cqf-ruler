@@ -85,7 +85,7 @@ public class CqfRulerDstu2Config
 
         @Bean
         public ServletRegistrationBean serverRegistrationBean() {
-            ServletRegistrationBean registration = new ServletRegistrationBean(this, this.properties.getServer().getPath());
+            ServletRegistrationBean registration = new ServletRegistrationBean(this, "/*");
             registration.setLoadOnStartup(1);
             return registration;
         }
@@ -98,7 +98,7 @@ public class CqfRulerDstu2Config
             setResourceProviders(this.resourceProviders);
             setPagingProvider(this.pagingProvider);
 
-            setServerAddressStrategy(new HardcodedServerAddressStrategy(this.properties.getServer().getPath()));
+            setServerAddressStrategy(new SplitBeforeBaseAddressStrategy());
 
             customize();
         }

@@ -34,5 +34,3 @@ hapi:
     jpa:
       scheduling-disabled: true
       subscription-enabled: false
-server:
-  port: 8082

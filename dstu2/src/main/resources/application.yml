@@ -19,8 +19,8 @@ spring:
 hapi:
   fhir:
     version: dstu2
-    server:
-      path: /cqf-ruler/baseDstu2/*
+    # server:
+    #   path: /cqf-ruler/baseDstu2/*
     rest:
       server-name: CQF Ruler DSTU2 FHIR Server
       server-version: 1.0.0
@@ -34,5 +34,3 @@ hapi:
     jpa:
       scheduling-disabled: true
       subscription-enabled: false
-server:
-  port: 8081
