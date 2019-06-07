@@ -67,6 +67,9 @@ public class BaseServlet extends RestfulServer
         CqlExecutionProvider cql = new CqlExecutionProvider(provider);
         plainProviders.add(cql);
 
+        CodeSystemUpdateProvider csUpdate = new CodeSystemUpdateProvider(provider);
+        plainProviders.add(csUpdate);
+
         registerProviders(resourceProviders);
         registerProviders(plainProviders);
         setResourceProviders(resourceProviders);
@@ -147,9 +150,29 @@ public class BaseServlet extends RestfulServer
         }
     }
 
-    protected void resolveResourceProviders(JpaDataProvider provider, IFhirSystemDao systemDao) throws ServletException {
+
+    protected void resolveResourceProviders(JpaDataProvider provider, IFhirSystemDao systemDao) throws ServletException
+    {
         NarrativeProvider narrativeProvider = new NarrativeProvider();
         HQMFProvider hqmfProvider = new HQMFProvider();
+
+        // ValueSet processing
+        FHIRValueSetResourceProvider valueSetProvider =
+                new FHIRValueSetResourceProvider(
+                        (CodeSystemResourceProvider) provider.resolveResourceProvider("CodeSystem")
+                );
+        ValueSetResourceProvider jpaValueSetProvider = (ValueSetResourceProvider) provider.resolveResourceProvider("ValueSet");
+        valueSetProvider.setDao(jpaValueSetProvider.getDao());
+        valueSetProvider.setContext(jpaValueSetProvider.getContext());
+
+        try {
+            unregister(jpaValueSetProvider, provider.getCollectionProviders());
+        } catch (Exception e) {
+            throw new ServletException("Unable to unregister provider: " + e.getMessage());
+        }
+
+        register(valueSetProvider, provider.getCollectionProviders());
+
         // Bundle processing
         FHIRBundleResourceProvider bundleProvider = new FHIRBundleResourceProvider(provider);
         BundleResourceProvider jpaBundleProvider = (BundleResourceProvider) provider.resolveResourceProvider("Bundle");
