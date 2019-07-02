@@ -1,19 +1,14 @@
 package org.opencds.cqf.config;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Driver;
-
+import ca.uhn.fhir.jpa.dao.DaoConfig;
 import ca.uhn.fhir.jpa.model.entity.ModelConfig;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import ca.uhn.fhir.jpa.dao.DaoConfig;
-import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
-import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
-import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Driver;
 
 @Configuration
 @EnableTransactionManagement
@@ -93,26 +88,5 @@ public class FhirServerConfigCommon {
         retVal.setPassword(HapiProperties.getDataSourcePassword());
         retVal.setMaxTotal(HapiProperties.getDataSourceMaxPoolSize());
         return retVal;
-    }
-
-
-    /**
-     * Do some fancy logging to create a nice access log that has details about each incoming request.
-     */
-    public IServerInterceptor loggingInterceptor() {
-        LoggingInterceptor retVal = new LoggingInterceptor();
-        retVal.setLoggerName(HapiProperties.getLoggerName());
-        retVal.setMessageFormat(HapiProperties.getLoggerFormat());
-        retVal.setErrorMessageFormat(HapiProperties.getLoggerErrorFormat());
-        retVal.setLogExceptions(HapiProperties.getLoggerLogExceptions());
-        return retVal;
-    }
-
-    /**
-     * This interceptor adds some pretty syntax highlighting in responses when a browser is detected
-     */
-    @Bean(autowire = Autowire.BY_TYPE)
-    public IServerInterceptor responseHighlighterInterceptor() {
-        return new ResponseHighlighterInterceptor();
     }
 }

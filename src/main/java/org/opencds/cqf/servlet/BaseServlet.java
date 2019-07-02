@@ -9,11 +9,13 @@ import ca.uhn.fhir.jpa.provider.dstu3.TerminologyUploaderProviderDstu3;
 import ca.uhn.fhir.jpa.rp.dstu3.*;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.term.IHapiTerminologySvcDstu3;
+import ca.uhn.fhir.jpa.util.ResourceProviderFactory;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Meta;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BaseServlet extends RestfulServer
 {
@@ -44,7 +47,15 @@ public class BaseServlet extends RestfulServer
 
         ApplicationContext appCtx = (ApplicationContext) getServletContext().getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
 
-        List<IResourceProvider> resourceProviders = appCtx.getBean("myResourceProvidersDstu3", List.class);
+        List<ResourceProviderFactory> resourceProviderFactories = appCtx.getBean("myResourceProvidersDstu3", List.class);
+        List<IResourceProvider> resourceProviders;
+        if (resourceProviderFactories.size() >= 1) {
+            resourceProviders = resourceProviderFactories.get(0).createProviders().stream().map(x -> (IResourceProvider) x).collect(Collectors.toList());
+        }
+        else {
+            throw new ServletException("Could not resolve resource providers");
+        }
+
         Object systemProvider = appCtx.getBean("mySystemProviderDstu3", JpaSystemProviderDstu3.class);
         List<Object> plainProviders = new ArrayList<>();
 
@@ -110,8 +121,15 @@ public class BaseServlet extends RestfulServer
          * HTML output when the request is detected to come from a
          * browser.
          */
-        ResponseHighlighterInterceptor responseHighlighterInterceptor = appCtx.getBean(ResponseHighlighterInterceptor.class);
+        ResponseHighlighterInterceptor responseHighlighterInterceptor = new ResponseHighlighterInterceptor();
         this.registerInterceptor(responseHighlighterInterceptor);
+
+        LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+        loggingInterceptor.setLoggerName(HapiProperties.getLoggerName());
+        loggingInterceptor.setMessageFormat(HapiProperties.getLoggerFormat());
+        loggingInterceptor.setErrorMessageFormat(HapiProperties.getLoggerErrorFormat());
+        loggingInterceptor.setLogExceptions(HapiProperties.getLoggerLogExceptions());
+        this.registerInterceptor(loggingInterceptor);
 
         /*
          * If you are hosting this server at a specific DNS name, the server will try to
