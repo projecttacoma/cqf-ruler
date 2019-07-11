@@ -5,6 +5,13 @@
     <artifactId>cqf-ruler</artifactId>
     <version>0.1.12-SNAPSHOT</version>
 
+    <modules>
+        <module>dstu2</module>
+        <module>stu3</module>
+        <module>r4</module>
+        <module>library</module>
+    </modules>
+
     <properties>
         <p.type>war</p.type>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -13,15 +20,14 @@
         <jetty_version>9.4.14.v20181114</jetty_version>
         <jackson_version>2.9.8</jackson_version>
         <hapi_version>3.8.0</hapi_version>
-        <cql_engine_version>1.3.8-SNAPSHOT</cql_engine_version>
-        <cqframework_version>1.3.16-SNAPSHOT</cqframework_version>
+        <cql_engine_version>1.3.9-SNAPSHOT</cql_engine_version>
+        <cqframework_version>1.3.17-SNAPSHOT</cqframework_version>
         <derby_version>10.14.2.0</derby_version>
 
         <!-- jetty plugin properties (used when starting server locally) -->
         <dev>true</dev>
-        <protocolAndHost>http://localhost:8080</protocolAndHost>
     </properties>
-    <packaging>${p.type}</packaging>
+    <packaging>pom</packaging>
 
     <name>CQF Ruler</name>
 
