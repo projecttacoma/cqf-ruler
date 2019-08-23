@@ -44,6 +44,7 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TransactionInterceptor.class);
     String introspectUrl = "http://localhost:8180/auth/realms/"
             + FhirAuthConfig.get("realm") + "/protocol/openid-connect/token/introspect";
+
     public TransactionInterceptor(FHIRValueSetResourceProvider valueSetResourceProvider) {
         isTransaction = false;
         this.valueSetResourceProvider = valueSetResourceProvider;
@@ -72,7 +73,7 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
 //            }
 //        }
         //RequestDetails requestDetails = actionRequestDetails.getRequestDetails();
-      //  makeDecision(restOperationTypeEnum, requestDetails, null, requestDetails.getId(), null);
+        //  makeDecision(restOperationTypeEnum, requestDetails, null, requestDetails.getId(), null);
     }
 
     @Override
@@ -144,9 +145,8 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
     }
 
 
-
-   @Override
-   public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
+    @Override
+    public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
 
         //get OAuth value from prop files
         String useOauth = FhirAuthConfig.get("use_oauth");
@@ -176,7 +176,7 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(params));
         } catch (UnsupportedEncodingException e) {
-           log.trace( e.getMessage());
+            log.trace(e.getMessage());
         }
         JsonObject jsonResponse;
         try {
@@ -188,7 +188,7 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.trace( e.getMessage());
+            log.trace(e.getMessage());
             jsonResponse = null;
         }
         if (jsonResponse.has("error")) {
@@ -210,40 +210,39 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
     }
 
 
-    private  void makeDecision(RestOperationTypeEnum restOperationTypeEnum, RequestDetails requestDetails, IBaseResource theInputResource, IIdType theInputResourceId,
-                               IBaseResource theOutputResource) {
+    private void makeDecision(RestOperationTypeEnum restOperationTypeEnum, RequestDetails requestDetails, IBaseResource theInputResource, IIdType theInputResourceId,
+                              IBaseResource theOutputResource) {
 
-        Verdict decision= applyRulesAndReturnDecision(restOperationTypeEnum, requestDetails, theInputResource,   requestDetails.getId(), theOutputResource  );
+        Verdict decision = applyRulesAndReturnDecision(restOperationTypeEnum, requestDetails, theInputResource, requestDetails.getId(), theOutputResource);
         if (decision.getDecision() == PolicyEnum.ALLOW) {
             return;
         }
-        handleDeny(decision);
+        super.handleDeny(decision);
     }
 
-  @Override
-  public Verdict applyRulesAndReturnDecision(RestOperationTypeEnum theOperation, RequestDetails theRequestDetails, IBaseResource theInputResource, IIdType theInputResourceId,
-                               IBaseResource theOutputResource) {
-    List<IAuthRule> rules = buildRuleList(theRequestDetails);
-    Set<AuthorizationFlagsEnum> flags = getFlags();
+    @Override
+    public Verdict applyRulesAndReturnDecision(RestOperationTypeEnum theOperation, RequestDetails theRequestDetails, IBaseResource theInputResource, IIdType theInputResourceId,
+                                               IBaseResource theOutputResource) {
+        List<IAuthRule> rules = buildRuleList(theRequestDetails);
+        Set<AuthorizationFlagsEnum> flags = getFlags();
 
-    log.trace("Applying {} rules to render an auth decision for operation {}", rules.size(), theOperation);
+        log.trace("Applying {} rules to render an auth decision for operation {}", rules.size(), theOperation);
 
-    Verdict verdict = null;
-    for (IAuthRule nextRule : rules) {
-      verdict = nextRule.applyRule(theOperation, theRequestDetails, theInputResource, theInputResourceId, theOutputResource, this, flags);
-      if (verdict != null) {
-        log.trace("Rule {} returned decision {}", nextRule, verdict.getDecision());
-        break;
-      }
+        Verdict verdict = null;
+        for (IAuthRule nextRule : rules) {
+            verdict = nextRule.applyRule(theOperation, theRequestDetails, theInputResource, theInputResourceId, theOutputResource, this, flags);
+            if (verdict != null) {
+                log.trace("Rule {} returned decision {}", nextRule, verdict.getDecision());
+                break;
+            }
+        }
+
+        if (verdict == null) {
+
+            return super.applyRulesAndReturnDecision(theOperation, theRequestDetails, theInputResource, theInputResourceId,
+                    theOutputResource);
+
+        }
+        return verdict;
     }
-
-    if (verdict == null) {
-      log.trace("No rules returned a decision, applying default {}", PolicyEnum.DENY);
-
-      return super.applyRulesAndReturnDecision( theOperation,  theRequestDetails,  theInputResource,  theInputResourceId,
-                                    theOutputResource) ;
-    }
-
-    return verdict;
-  }
 }
