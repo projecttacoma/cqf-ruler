@@ -26,7 +26,7 @@ public class FhirAuthConfig {
     /**
      * Load properties from an input stream. (ex, when running inside a JAR)
      */
-    public static void load(InputStream stream) throws IOException {
+    private static void load(InputStream stream) throws IOException {
         properties.load(stream);
     }
     /**

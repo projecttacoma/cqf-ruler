@@ -64,21 +64,10 @@ public class TransactionInterceptor  extends AuthorizationInterceptor implements
 
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum restOperationTypeEnum, ActionRequestDetails actionRequestDetails) {
-//        if (isTransaction && actionRequestDetails.getResource() instanceof Bundle) {
-//            if (((Bundle) actionRequestDetails.getResource()).hasEntry()) {
-//                for (Bundle.BundleEntryComponent entry : ((Bundle) actionRequestDetails.getResource()).getEntry()) {
-//                    if (entry.hasResource() && entry.getResource() instanceof ValueSet) {
-//                        valueSetResourceProvider.populateCodeSystem((ValueSet) entry.getResource());
-//                    }
-//                }
-//            }
-//        }
-
     }
 
     @Override
     public boolean incomingRequestPreProcessed(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-
         return true;
     }
 
